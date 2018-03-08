@@ -1,12 +1,12 @@
-package impl;
+package impl.model;
 
 public class Menu {
     public enum name{
         df, de;
     }
 
-    public String name;
-    public int price;
+    private String name;
+    private int price;
 
     public Menu(String name, int price) {
         this.name = name;

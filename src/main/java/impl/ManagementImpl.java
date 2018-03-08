@@ -1,5 +1,12 @@
 package impl;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import impl.model.Employee;
+import impl.model.Menu;
+import impl.model.Restaurant;
+
 import management.Management;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -8,7 +15,6 @@ import org.json.simple.parser.ParseException;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ManagementImpl implements Management {
     public static final String FILENAME = "info.json";
@@ -19,6 +25,9 @@ public class ManagementImpl implements Management {
     Menu burger4 = new Menu("Bacon-Cheese Burger", 37);
     Menu burger5 = new Menu("Vegan Burger", 32);
 
+    /*
+    * This method is data-driven
+    */
     public String readFile(String fileName) throws IOException, ParseException {
         JSONParser parser = new JSONParser();
         Object object = parser.parse(new FileReader(fileName));
@@ -27,18 +36,38 @@ public class ManagementImpl implements Management {
         return name.toString();
     }
 
-    public Restaurant setNameFromJSON(ManagementImpl getName) throws IOException, ParseException {
-        String name = getName.readFile(FILENAME);
+    public Restaurant setNameFromJSON(ManagementImpl manager) throws IOException, ParseException {
+        String name = manager.readFile(FILENAME);
         Restaurant restaurant = new Restaurant(name, "burger");
         return restaurant;
     }
 
-    public int calculateTotalPrice(List<Menu> order) {
-        order = new ArrayList<Menu>();
+    /*
+    * This is a new method since assignment 1.
+    */
+    public List<Menu> getMenuFromJSON(String jsonFile) throws FileNotFoundException {
+        JsonParser jsonParser = new JsonParser();
+        List<Menu> listOfMenu = new ArrayList<>();
 
-        order.add(burger1);
-        order.add(burger2);
-        order.add(burger4);
+        JsonObject json = (JsonObject) jsonParser.parse(new FileReader(jsonFile));
+        JsonArray jsonArray = json.get("Menu").getAsJsonArray();
+        for (Object jsonObject : jsonArray) {
+            JsonObject jsonMenu = (JsonObject) jsonObject;
+            String name = jsonMenu.get("name").getAsString();
+            int price = jsonMenu.get("price").getAsInt();
+
+            Menu menu = new Menu(name, price);
+            listOfMenu.add(menu);
+        }
+        return listOfMenu;
+    }
+
+    public int calculateTotalPrice(List<Menu> order) {
+//        order = new ArrayList<Menu>();
+//
+//        order.add(burger1);
+//        order.add(burger2);
+//        order.add(burger4);
 
         int result = 0;
         for (Menu menu : order) {
@@ -47,19 +76,13 @@ public class ManagementImpl implements Management {
         return result;
     }
 
-    public double calculateTipFromTotalPrice(ManagementImpl manager) {
-        double result = calculateTotalPrice(manager.orderList);
+    public double calculateTipFromTotalPrice(List<Menu> order) {
+        double result = calculateTotalPrice(order);
         result = result * 10 / 100;
         return result;
     }
 
     public int getOrderSize(List<Menu> order) {
-        order = new ArrayList<Menu>();
-
-        order.add(burger1);
-        order.add(burger2);
-        order.add(burger4);
-        order.add(burger5);
         int size = order.size();
         return size;
     }
@@ -103,13 +126,21 @@ public class ManagementImpl implements Management {
         Restaurant restaurant = manager.setNameFromJSON(manager);
         System.out.println("Method 2 result: " + restaurant.getName() + ". Type: " + restaurant.getType());
 
-        int orderPirce = manager.calculateTotalPrice(manager.orderList);
+        List<Menu> listOfMenu = new ArrayList<>();
+        listOfMenu = manager.getMenuFromJSON("burger.json");
+        System.out.println("New method 1: Size og list: " + listOfMenu.size());
+
+        List<Menu> order = new ArrayList<>();
+        order.add(manager.burger1);
+        order.add(manager.burger2);
+        order.add(manager.burger4);
+        int orderPirce = manager.calculateTotalPrice(order);
         System.out.println("Method 3 result: " + orderPirce + "kr. is the total price.");
 
-        double tip = manager.calculateTipFromTotalPrice(manager);
+        double tip = manager.calculateTipFromTotalPrice(order);
         System.out.println("Method 4 result: " + tip + "kr. is the total tip waiter will get.");
 
-        int orderSize = manager.getOrderSize(manager.orderList);
+        int orderSize = manager.getOrderSize(order);
         System.out.println("Method 5 result: " + orderSize + " is the total size in this order.");
 
         Employee employee1 = new Employee("Billy Hofman", Employee.Type.HALFTIME, 110, 15);

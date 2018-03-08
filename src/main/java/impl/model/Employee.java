@@ -1,4 +1,4 @@
-package impl;
+package impl.model;
 
 public class Employee {
     public enum Type {

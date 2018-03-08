@@ -1,4 +1,4 @@
-package impl;
+package impl.model;
 
 public class Restaurant {
     private String name;

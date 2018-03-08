@@ -1,0 +1,40 @@
+{
+  "Menu": [
+    {
+      "name": "Burger",
+      "price": 30
+    },
+    {
+      "name": "Cheese Burger",
+      "price": 35
+    },
+    {
+      "name": "Bacon Burger",
+      "price": 35
+    },
+    {
+      "name": "Bacon-Cheese Burger",
+      "price": 37
+    },
+    {
+      "name": "Vegan Burger",
+      "price": 32
+    },
+    {
+      "name": "Chicken Burger",
+      "price": 30
+    },
+    {
+      "name": "Double Cheese Burger",
+      "price": 41
+    },
+    {
+      "name": "Double Bacon-Burger Burger",
+      "price": 45
+    },
+    {
+      "name": "Kids Burger",
+      "price": 25
+    }
+  ]
+}
